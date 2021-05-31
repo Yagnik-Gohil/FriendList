@@ -1,0 +1,145 @@
+﻿@using Microsoft.AspNetCore.Http
+@model IEnumerable<DataAccessLayer.Model.PostModel>
+@{
+    ViewData["Title"] = "Feed Post";
+}
+@{
+
+    var userId = Context.Session.GetString("userId");
+}
+
+<style>
+
+    #add-comment-popup-container {
+        padding: 20px 30px 20px 30px;
+    }
+
+    #add-comment-popup-container h2 {
+        font-size: 26px;
+        font-weight: 600;
+        line-height: 30px;
+    }
+
+    #comments {
+        height: 100px;
+        text-align: center;
+    }
+
+</style>
+
+
+<div class="col text-center">
+    <h2>Feed Posts</h2>
+</div>
+
+@using Kendo.Mvc.UI
+<div class="container">
+    @(Html.Kendo().Grid<DataAccessLayer.Model.PostModel>()
+        .Name("grid")
+        .Columns(columns =>
+        {
+            columns.Template("").Title("Posts");
+
+        })
+        .ClientRowTemplate(
+            "<div class='row' data-uid='#: PID #'>" +
+
+                "<div class='col-md-8'>"+
+                    "<p style='padding-left: 10px;'>" +
+                        "<span class='title'><b>#: UserName #</b> | Posted on : #: CreatedDate #</span>" +
+                    "</p>" +
+                    "# if (ImagePath != null) { #" +
+                        "<div class='photo' style='text-align: center;'>" +
+                            "<img class='img-thumbnail' style='max-height: 300px; max-width: 500px;' src='../#:data.ImagePath#' alt='#: data.PID #' />" +
+                        "</div>" +
+                    "# } #" +
+                    "# if (Description != null) { #" +
+                        "<h3 style='text-align: center;'>#: Description#</h3>" +
+                    "# } #" +
+                "</div>" +
+
+                "<div class='col-md-4' style='border-left:1px solid grey'>" +
+                    "<div class='text-center' style='padding-right: 15px'>" +
+                        "<span class='title'><b>Comments</b> | </span><a href='\\#' onclick='Comment_Popup(#:PID#)'>Add Comment</a>" +
+                        "<div style='min-height:200px; max-height:400px; padding-top:15px; border:1px solid grey; overflow:scroll'>" +
+                            "# for (var i = 0; i < CommentModel.length; i++) { #" +
+                                "<span><b>#:CommentModel[i].UserName#</b></span>" +
+                                "<br/><p>#:CommentModel[i].Comment#</p><hr/>" +
+                            "# } #" +
+                        "</div>"+
+                    "</div>" +
+                "</div>" +
+
+             "</div>" +
+             "<hr/>"
+        )
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .Read(read => read.Action("FeedPostsRead", "Account"))
+        )
+    )
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="add-comment-popup-container">
+
+            <div class="row">
+
+                <div class="col">
+
+                    <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col">
+                    <h2>
+                        Add Comment
+                    </h2>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col">
+
+                    @using (Html.BeginForm("AddComment", "Account", FormMethod.Post))
+                    {
+                        <input type="hidden" id="myField" name="pid" />
+                        
+
+                        <div class="form-group">
+                            <label for="comments" class="label-text">Comments *</label>
+                            <textarea type="text" class="form-control" id="comments" placeholder="Comments" name="Comments" maxlength="100"></textarea>
+                        </div>
+
+                        <button class="btn btn-primary" type="submit">Add Comment</button>
+                    }
+
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var Comment_Popup = function (pid) {
+
+        document.getElementById('myField').value = pid;
+        $("#exampleModal").modal("show");
+
+    }
+
+</script>

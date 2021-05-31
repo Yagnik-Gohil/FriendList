@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Http
+@model IEnumerable<DataAccessLayer.Entities.UserTable>
+@{
+    ViewData["Title"] = "My Friends";
+}
+@{
+
+    var userId = Context.Session.GetString("userId");
+}
+<div class="text-center">
+    <h2 class="display-4">My Friends</h2>
+</div>
+
+@*<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.FirstName @item.LastName</td>
+                <td>@item.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>*@
+
+@using Kendo.Mvc.UI
+@(Html.Kendo().Grid<DataAccessLayer.Entities.UserTable>()
+        .Name("grid")
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.FirstName).ClientTemplate("#=FirstName# #=LastName#").Title("Name");
+            columns.Bound(c => c.Email).Title("Email");
+
+        })
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .Model(model => model.Id(s => s.UID))
+            .Read(read => read.Action("MyFriendsRead", "FriendList"))
+        )
+)

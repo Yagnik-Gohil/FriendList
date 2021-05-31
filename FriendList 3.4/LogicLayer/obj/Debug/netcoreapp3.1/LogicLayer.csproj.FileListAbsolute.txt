@@ -1,0 +1,12 @@
+C:\Users\pca220\source\repos\FriendList\LogicLayer\bin\Debug\netcoreapp3.1\LogicLayer.deps.json
+C:\Users\pca220\source\repos\FriendList\LogicLayer\bin\Debug\netcoreapp3.1\LogicLayer.dll
+C:\Users\pca220\source\repos\FriendList\LogicLayer\bin\Debug\netcoreapp3.1\LogicLayer.pdb
+C:\Users\pca220\source\repos\FriendList\LogicLayer\bin\Debug\netcoreapp3.1\DataAccessLayer.dll
+C:\Users\pca220\source\repos\FriendList\LogicLayer\bin\Debug\netcoreapp3.1\DataAccessLayer.pdb
+C:\Users\pca220\source\repos\FriendList\LogicLayer\obj\Debug\netcoreapp3.1\LogicLayer.csprojAssemblyReference.cache
+C:\Users\pca220\source\repos\FriendList\LogicLayer\obj\Debug\netcoreapp3.1\LogicLayer.AssemblyInfoInputs.cache
+C:\Users\pca220\source\repos\FriendList\LogicLayer\obj\Debug\netcoreapp3.1\LogicLayer.AssemblyInfo.cs
+C:\Users\pca220\source\repos\FriendList\LogicLayer\obj\Debug\netcoreapp3.1\LogicLayer.csproj.CoreCompileInputs.cache
+C:\Users\pca220\source\repos\FriendList\LogicLayer\obj\Debug\netcoreapp3.1\LogicLayer.csproj.CopyComplete
+C:\Users\pca220\source\repos\FriendList\LogicLayer\obj\Debug\netcoreapp3.1\LogicLayer.dll
+C:\Users\pca220\source\repos\FriendList\LogicLayer\obj\Debug\netcoreapp3.1\LogicLayer.pdb

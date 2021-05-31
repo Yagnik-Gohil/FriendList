@@ -1,0 +1,54 @@
+﻿@model IEnumerable<DataAccessLayer.Model.SearchGroupModel>
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Search Groups";
+}
+@{
+    var userId = Context.Session.GetString("userId");
+}
+<style>
+
+    .group-list {
+        background-color: antiquewhite;
+        height: 50px;
+        border-radius: 5px;
+    }
+
+</style>
+
+<div class="text-center">
+    <h1 class="display-4">Search Groups</h1>
+</div>
+
+<br />
+
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            @foreach (var item in Model)
+            {
+                <div class="row group-list mb-2">
+                    <div class="col-md-10" style="align-self:center">
+                        @item.GroupName
+                    </div>
+                    <div class="col-md-2" style="align-self: center; text-align: end;">
+                        @if (item.Status == "unknown")
+                        {
+                            <a class="btn btn-primary" href="@Url.Action("SendJoinRequest","Group", new { gid = item.GID })">Join</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-primary" href="@Url.Action("CancelJoinRequest","Group", new { gid = item.GID })">Cancel Request</a>
+                        }
+                    </div>
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

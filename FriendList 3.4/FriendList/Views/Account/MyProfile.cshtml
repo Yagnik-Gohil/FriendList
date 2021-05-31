@@ -1,0 +1,138 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Extensions
+@model DataAccessLayer.Model.UserProfile
+@{
+    ViewData["Title"] = "My Profile";
+}
+@{
+
+    var userId = Context.Session.GetString("userId");
+}
+<style>
+
+    .my-profile {
+        background-color: antiquewhite;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+</style>
+<div class="container my-profile">
+
+    <div class="row">
+
+        <div class="col text-center">
+            <h2>My Profile</h2>
+        </div>
+
+    </div>
+
+    <hr />
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-12 text-center">
+            Name: @Model.UserTable.FirstName @Model.UserTable.LastName
+        </div>
+        <div class="col-md-12 text-center">
+            Email: @Model.UserTable.Email
+        </div>
+        <div class="col-md-12 text-center">
+            Total Friends: <a asp-controller="FriendList" asp-action="MyFriends">@Model.TotalFriends</a>
+        </div>
+        <div class="col-md-12 text-center">
+            Friend Requests: <a asp-controller="FriendList" asp-action="FriendRequest">@Model.FriendRequests</a>
+        </div>
+
+        <div class="col-md-12 text-center">
+            <hr />
+            <a class="btn btn-primary" href="@Url.Action("CreatePost","Account")" style="color: white;">Create Post</a>
+        </div>
+
+    </div>
+        
+</div>
+
+<br />
+
+@*
+@using Kendo.Mvc.UI
+@(Html.Kendo().Grid<DataAccessLayer.Entities.PostTable>()
+        .Name("grid")
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.Description).Title("Post");
+            columns.Bound(c => c.ImagePath).ClientTemplate("<img src='../#:ImagePath#' height='62' width='62'/>").Title("Image");
+            columns.Bound(c => c.CreatedDate).Title("Created On").Format("{0:dd-MMMM-yy}");
+            columns.Bound(c => c.PID).ClientTemplate("#=EditButton(data)#").Title("Action");
+        })
+        .DataSource(dataSource => dataSource
+        .Ajax()
+        .Model(model => model.Id(s => s.PID))
+        .Read(read => read.Action("MyProfileRead", "Account"))
+    )
+)
+*@
+
+<div class="container" style="padding-left: 50px; padding-right: 50px;">
+    @(Html.Kendo().Grid<DataAccessLayer.Model.PostModel>()
+        .Name("grid")
+        .Columns(columns =>
+        {
+            columns.Template("").Title("My Posts");
+
+        })
+        .ClientRowTemplate(
+            "<div class='row' data-uid='#: PID #'>" +
+
+                "<div class='col-md-8'>"+
+                    "<p style='padding-left: 10px;'>" +
+                        "<span class='title'><b>#: UserName #</b> | Posted on : #: CreatedDate #</span>" +
+                    "</p>" +
+                    "# if (ImagePath != null) { #" +
+                        "<div class='photo' style='text-align: center;'>" +
+                            "<img class='img-thumbnail' style='max-height: 300px; max-width: 500px;' src='../#:data.ImagePath#' alt='#: data.PID #' />" +
+                            @*"<img class='img-thumbnail' style='min-height: 300px; min-width: 500px;' src='https://picsum.photos/300/500' alt='#: data.PID #' />" +*@
+                        "</div>" +
+                    "# } #" +
+                    "# if (Description != null) { #" +
+                        "<h3 style='text-align: center;'>#: Description#</h3>" +
+                    "# } #" +
+                "</div>" +
+
+                "<div class='col-md-4' style='border-left:1px solid grey'>" +
+                    "<div class='text-center' style='padding-right: 15px'>" +
+                        "<span class='title'><b>Comments</b></span>" +
+                        "<div style='min-height:200px; max-height:400px; padding-top:15px; border:1px solid grey; overflow:scroll'>" +
+                            "# for (var i = 0; i < CommentModel.length; i++) { #" +
+                                "<span><b>#:CommentModel[i].UserName#</b></span>" +
+                                "<br/><p>#:CommentModel[i].Comment#</p><hr/>" +
+                            "# } #" +
+                        "</div>"+
+                    "</div>" +
+                "</div>" +
+
+             "</div>" +
+             "<hr/>"
+        )
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .Read(read => read.Action("MyProfileRead", "Account"))
+        )
+    )
+</div>
+
+
+
+@*
+<script>
+
+    function EditButton(data) {
+
+        var template = kendo.format("<a class=\"k-button\" href='" + '@Url.Action("CreatePost", "Account", new { pid = "_pid_", ReturnUrl = Context.Request.GetEncodedUrl() }).Replace("_pid_","{0}" )' + " '>Edit</a> ", data.PID)
+        return template;
+
+    }
+    
+
+</script>*@

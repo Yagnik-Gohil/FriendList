@@ -1,0 +1,72 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Extensions
+@model DataAccessLayer.Entities.PostTable
+@{
+    ViewData["Title"] = "Create Post";
+}
+@{
+
+    var userId = Context.Session.GetString("userId");
+}
+
+<h1 class="text-center">Create Post</h1>
+
+@using Kendo.Mvc.UI
+
+<hr />
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <form asp-controller="Account" asp-action="CreatePost" enctype="multipart/form-data">
+            <div class="form-group">
+                <label asp-for="Description" class="control-label">Enter your thoughts</label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @(Html.Kendo().Upload()
+                    .Name("Photo")
+                    .HtmlAttributes(new { aria_label = "files", @style = "width:300px;" })
+                    .Validation(validation =>
+                    {
+                        validation.AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png", ".bmp", ".gif" });
+                    })
+                    .Messages(m => m.Select("Select Image"))
+                    .Multiple(false)
+                        .Events(events => events
+                        .Select("onSelect")
+                        .Remove("onRemove")
+                    )
+                )
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-block btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+
+    function onRemove(e) {
+        $("#displayPhoto").attr("src", "/images/profile-default.png");
+    }
+
+    function onSelect(e) {
+        var file = e.files[0].rawFile;
+        var ext = e.files[0].extension.toLowerCase();
+
+        if (ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".bmp" || ext == ".gif") {
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                $("#displayPhoto").attr("src", this.result); //img id where the photo is to be displayed
+            };
+
+            reader.readAsDataURL(file); //Read the selected photo and display in UI
+        }
+        else { //If file extension does not belong to photo display a default image
+            $("#displayPhoto").attr("src", "/images/profile-default.png");
+        }
+    }
+
+</script>

@@ -1,0 +1,78 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Extensions
+@model IEnumerable<DataAccessLayer.Entities.UserTable>
+@{
+    ViewData["Title"] = "Search Friends";
+}
+@{
+
+    var userId = Context.Session.GetString("userId");
+}
+<div class="text-center">
+    <h2 class="display-4">Friend Suggestion</h2>
+</div>
+
+@*<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.FirstName @item.LastName</td>
+                @if (item.Status == "unknown" || item.Status == null)
+                {
+                    <td><a href="@Url.Action("SendRequest","FriendList", new { uid = item.UID })" class="btn btn-primary" style="color: white;">Add Friend</a></td>
+                }
+                else if (item.Status == "requestedByYou")
+                {
+                    <td><a href="@Url.Action("CancelRequest","FriendList", new { uid = item.UID, ReturnUrl = Context.Request.GetEncodedUrl(), status = "cancel" })" class="btn btn-secondary" style="color: white;">Cancel Request</a></td>
+                }
+                else if(item.Status == "requestedToYou")
+                {
+                    <td>
+                        <a href="@Url.Action("AcceptRequest","FriendList", new { uid = item.UID, ReturnUrl = Context.Request.GetEncodedUrl() })" class="btn btn-success" style="color: white;">Accept</a>
+                        <a href="@Url.Action("CancelRequest","FriendList", new { uid = item.UID, ReturnUrl = Context.Request.GetEncodedUrl(), status = "reject" })" class="btn btn-danger" style="color: white;">Reject</a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>*@
+@using Kendo.Mvc.UI
+    @(Html.Kendo().Grid<DataAccessLayer.Entities.UserTable>()
+        .Name("grid")
+        .Columns(columns =>
+        {
+            columns.Bound(c => c.FirstName).ClientTemplate("#=FirstName# #=LastName#").Title("Name");
+            columns.Bound(c => c.UID).ClientTemplate("#=selectButton(data)#").Title("Action");
+
+        })
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .Model(model => model.Id(s => s.UID))
+            .Read(read => read.Action("Read", "FriendList"))
+        )
+)
+
+<script>
+    function selectButton(data) {
+        if (data.Status == "unknown" || data.Status == null) {
+            var template = kendo.format("<a class=\"k-button\" href='" + '@Url.Action("SendRequest", "FriendList", new { uid = "_uid_" }).Replace("_uid_","{0}" )' + " '>Add Friend</a>  ",data.UID)
+            return template;
+        }
+        else if (data.Status == "requestedByYou") {
+            var template = kendo.format("<a class=\"k-button\" href='" + '@Url.Action("CancelRequest", "FriendList", new { uid = "_uid_", ReturnUrl = Context.Request.GetEncodedUrl(), status = "cancel" }).Replace("_uid_", "{0}")' + " '>Cancel Request</a>  ", data.UID)
+            return template;
+        }
+        else if (data.Status == "requestedToYou") {
+            var template = kendo.format("<a class=\"k-button\" href='" + '@Url.Action("AcceptRequest", "FriendList", new { uid = "_uid_", ReturnUrl = Context.Request.GetEncodedUrl() }).Replace("_uid_","{0}" )' + " '>Accept</a> ", data.UID) + kendo.format("<a class=\"k-button\" href='" + '@Url.Action("CancelRequest", "FriendList", new { uid = "_uid_", ReturnUrl = Context.Request.GetEncodedUrl(), status = "reject" }).Replace("_uid_", "{0}")' + " '>Reject</a> ", data.UID)
+            return template;
+        }
+    }
+
+</script>

@@ -1,0 +1,20 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Extensions
+@model IEnumerable<DataAccessLayer.Entities.UserTable>
+@foreach (var item in Model)
+{
+    <h5>@item.FirstName @item.LastName</h5>
+    @if (item.Status == "unknown")
+    {
+        <a href="@Url.Action("SendInvite","Group", new { uid = item.UID, ReturnUrl = @ViewBag.ReturnUrl, gid = @ViewBag.GID })" class="btn btn-primary" style="color: white;">Invite</a>
+    }
+    else if (item.Status == "Invited")
+    {
+        <a href="@Url.Action("CancelInvite","Group", new { uid = item.UID, ReturnUrl = @ViewBag.ReturnUrl, gid = @ViewBag.GID })" class="btn btn-secondary" style="color: white;">Cancel Invite</a>
+    }
+    else if (item.Status == "wantedtojoin")
+    {
+        <a href="@Url.Action("AcceptJoinRequest","Group", new { uid = item.UID, ReturnUrl = @ViewBag.ReturnUrl, gid = @ViewBag.GID })" class="btn btn-secondary" style="color: white;">Accept</a>
+        <a href="@Url.Action("RejectJoinRequest","Group", new { uid = item.UID, ReturnUrl = @ViewBag.ReturnUrl, gid = @ViewBag.GID })" class="btn btn-secondary" style="color: white;">Reject</a>
+    }
+}
