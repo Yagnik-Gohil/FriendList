@@ -1,0 +1,197 @@
+﻿@model DataAccessLayer.Model.MyGroupsModel
+@using Microsoft.AspNetCore.Http
+@using Kendo.Mvc.UI
+@{
+    ViewData["Title"] = "My Groups";
+}
+@{
+    var userId = Context.Session.GetString("userId");
+}
+<style>
+
+    #create-group-popup-container {
+        padding: 20px 30px 20px 30px;
+    }
+
+        #create-group-popup-container h2 {
+            font-size: 26px;
+            font-weight: 600;
+            line-height: 30px;
+        }
+
+    .group-list {
+        background-color: antiquewhite;
+        height: 50px;
+        border-radius: 5px;
+    }
+</style>
+
+<div class="text-center">
+    <h1 class="display-4">My Groups</h1>
+</div>
+
+<br />
+
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-md-12 text-center mb-2">
+
+            <a class="btn btn-primary" onclick="Create_Popup()" style="color:white;">Create Group</a>
+            <a class="btn btn-primary" href="@Url.Action("SearchGroup","Group")" style="color:white;">Search Group</a>
+
+        </div>
+
+        <div class="col-md-12">
+
+            @(Html.Kendo().Grid<DataAccessLayer.Model.MyGroupsModel>()
+                    .Name("grid")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(c => c.MyGroups.FirstOrDefault().GroupName).Title("Group Name");
+                        columns.Bound(c => c.MyGroups.FirstOrDefault().GID).ClientTemplate("#=OpenButton(data)#").Title("Action");
+
+                    })
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Model(model => model.Id(s => s.MyGroups.FirstOrDefault().GID))
+                        .Read(read => read.Action("MyGroupsRead", "Group"))
+                    )
+            )
+            @*@foreach (var item in Model.MyGroups)
+            {
+                <div class="row group-list mb-2">
+                    <div class="col-md-10" style="align-self:center">
+                        @item.GroupName
+                    </div>
+                    <div class="col-md-2" style="align-self: center; text-align: end;">
+                        <a class="btn btn-primary" asp-area="" asp-controller="Group" asp-action="OpenGroup" asp-route-id="@item.GID">Open</a>
+                    </div>
+                </div>
+            }*@
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="text-center">
+    <h1 class="display-4">Group Invites</h1>
+</div>
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            @(Html.Kendo().Grid<DataAccessLayer.Model.MyGroupsModel>()
+                    .Name("grid2")
+                    .Columns(columns =>
+                    {
+                        columns.Bound(c => c.GroupInvites.FirstOrDefault().GroupName).Title("Group Name");
+                        columns.Bound(c => c.GroupInvites.FirstOrDefault().GID).ClientTemplate("#=InviteButtons(data)#").Title("Action");
+
+                    })
+                    .DataSource(dataSource => dataSource
+                        .Ajax()
+                        .Model(model => model.Id(s => s.GroupInvites.FirstOrDefault().GID))
+                        .Read(read => read.Action("GroupInvitesRead", "Group"))
+                    )
+            )
+            @*@foreach (var item in Model.GroupInvites)
+            {
+                <div class="row group-list mb-2">
+                    <div class="col-md-10" style="align-self:center">
+                        @item.GroupName
+                    </div>
+                    <div class="col-md-2" style="align-self: center; text-align: end;">
+                        <a class="btn btn-primary" href="@Url.Action("AcceptInvite","Group", new { gid = item.GID })">Accept</a>
+                        <a class="btn btn-primary" href="@Url.Action("RejectInvite","Group", new { gid = item.GID })">Reject</a>
+                    </div>
+                </div>
+            }*@
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="create-group-popup-container">
+
+            <div class="row">
+
+                <div class="col">
+
+                    <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col">
+                    <h2>
+                        Create Group
+                    </h2>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col">
+
+                    @using (Html.BeginForm("CreateGroup", "Group", FormMethod.Post))
+                    {
+
+                        <div class="form-group">
+                            <label for="title" class="label-text">Title</label>
+                            <input type="text" class="form-control" id="title" placeholder="Group Name" name="Title" />
+                        </div>
+
+                        <button class="btn btn-primary" type="submit">Create</button>
+                    }
+
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function OpenButton(data) {
+
+        var template = kendo.format("<a class=\"k-button\" href='" + '@Url.Action("OpenGroup", "Group", new { gid = "_gid_" }).Replace("_gid_","{0}" )' + " '>Open</a> ", data.GID)
+        return template;
+
+    }
+
+    function InviteButtons(data) {
+
+        var template = kendo.format("<a class=\"k-button\" href='" + '@Url.Action("AcceptInvite", "Group", new { gid = "_gid_" }).Replace("_gid_","{0}" )' + " '>Accept</a> ", data.GID) + kendo.format("<a class=\"k-button\" href='" + '@Url.Action("RejectInvite", "Group", new { gid = "_gid_" }).Replace("_gid_","{0}" )' + " '>Reject</a> ", data.GID)
+        return template;
+
+    }
+
+    var Create_Popup = function () {
+
+        $("#exampleModal").modal("show");
+
+    }
+
+</script>
